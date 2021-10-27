@@ -1,7 +1,7 @@
 {
-  "name": "emploidut-api",
+  "name": "fsct-api",
   "version": "1.0.0",
-  "description": "emploitdut-api",
+  "description": "FSCT-web-back",
   "main": "js/src/app.js",
   "scripts": {
     "start": "tsc && ts-node js/src/app.js",
@@ -9,23 +9,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint --format verbose --project tslint.json"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/SiMDE-Projects/emploidut-api.git"
-  },
-  "author": {
-    "name": "SIMDE",
-    "email": "simde@assos.utc.fr"
-  },
-  "contributors": [
-    "Arthur WACQUEZ <arthur.wacquez@gmail.com>",
-    "Victor TONDOLO <victor.tondolo@gmail.com>"
-  ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/SiMDE-Projects/emploidut-api/issues"
+    "url": "https://github.com/victor-tndl/FCST-web-back/issues"
   },
-  "homepage": "https://github.com/SiMDE-Projects/emploidut-api#readme",
+  "homepage": "https://github.com/victor-tndl/FCST-web-back/blob/master/README.md",
   "keywords": [],
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
@@ -37,10 +25,8 @@
     "dotenv": "^8.2.0",
     "express-validator": "^6.12.0",
     "express-winston": "^4.1.0",
-    "jwt-decode": "^3.1.2",
     "mariadb": "^2.5.3",
     "morgan": "^1.10.0",
-    "oauth": "^0.9.15",
     "pug": "^3.0.2",
     "ts-node": "^9.1.1",
     "tslint": "^6.1.3",
