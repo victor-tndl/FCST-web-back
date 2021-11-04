@@ -20,13 +20,19 @@ export class UserController {
         this.router.post(
             '/',
             [
-                check('id').exists().withMessage('Field "id" is missing').isAlphanumeric().trim().escape(),
+                check('email').exists().withMessage('Field "email" is missing').isEmail().trim().escape(),
+                check('password').exists().withMessage('Field "password" is missing').trim().escape(),
+                check('firstName').exists().withMessage('Field "firstName" is missing').trim().escape(),
+                check('lastName').exists().withMessage('Field "id" is missing').trim().escape(),
             ],
             this.postOne);
         this.router.put(
             '/:id',
             [
-                check('id').trim().escape(),
+                check('email').trim().escape(),
+                check('password').trim().escape(),
+                check('firstName').trim().escape(),
+                check('lastName').trim().escape(),
             ],
             this.putOne);
         this.router.delete('/:id', this.deleteOne);
@@ -43,7 +49,9 @@ export class UserController {
         Logger.debug('GET users');
 
         // Return every users in DB
-        return await this.userService.findAll();
+        const users = await this.userService.findAll();
+        res.send(users).end();
+        return;
     }
 
     /**

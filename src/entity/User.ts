@@ -12,7 +12,7 @@ export class User {
     email!: string;
 
     @Column("varchar", { length: 50, nullable: false, select: false})
-    private password?: string = '';
+    private password?: string;
 
     @Column()
     firstName!: String;

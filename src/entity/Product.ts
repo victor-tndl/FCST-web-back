@@ -26,12 +26,15 @@ export class Product {
     @Column("text")
     description: String = '';
 
+    @Column("float")
+    price: number = 0;
+
     @Column({
         type: "enum",
         enum: ["OPENED" , "SOLD" , "CLOSED"],
         default: "OPENED"
     })
-    state: String = productState.OPENED;
+    status: String = productState.OPENED;
 
     @Column({
         type: "enum",

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { check, ValidationError, validationResult } from 'express-validator';
-import { productState } from "../entity/Product";
+import { productState, productType } from "../entity/Product";
 import { ProductService } from "../services/ProductService";
 import Logger from "../services/Logger";
 
@@ -21,25 +21,23 @@ export class ProductController {
         this.router.post(
             '/',
             [
-                check('id').exists().withMessage('Field "id" is missing').isAlphanumeric().trim().escape(),
                 check('title').exists().withMessage('Field "title" is missing').trim().escape(),
+                check('price').exists().withMessage('Field "price" is missing').isFloat().trim().escape(),
                 check('description').exists().withMessage('Field "description" is missing').trim().escape(),
-                check('state')
-                    .exists().withMessage('Field "state" is missing')
-                    .custom((value: String) => {
-                        return (Object.values(productState) as String[]).includes(value);
-                    }).trim().escape(),
             ],
             this.postOne);
         this.router.put(
             '/:id',
             [
-                check('id').trim().escape(),
                 check('title').trim().escape(),
+                check('price').isFloat().trim().escape(),
                 check('description').trim().escape(),
                 check('state').custom((value: String) => {
-                        return (Object.values(productState) as String[]).includes(value);
-                    }).trim().escape(),
+                    return (Object.values(productState) as String[]).includes(value);
+                }).trim().escape(),
+                check('type').custom((value: String) => {
+                    return (Object.values(productType) as String[]).includes(value);
+                }).trim().escape(),
             ],
             this.putOne);
         this.router.delete('/:id', this.deleteOne);
@@ -56,7 +54,9 @@ export class ProductController {
         Logger.debug('GET products');
         
         // Return every products in DB
-        return await this.productService.findAll();
+        const products = await this.productService.findAll();
+        res.send(products).end();
+        return;
     }
 
     /**

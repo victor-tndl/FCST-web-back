@@ -20,13 +20,17 @@ export class SellController {
         this.router.post(
             '/',
             [
-                check('id').exists().withMessage('Field "id" is missing').isAlphanumeric().trim().escape(),
+                check('seller').exists().withMessage('Field "seller" is missing').isUUID().trim().escape(),
+                check('buyer').exists().withMessage('Field "buyer" is missing').isUUID().trim().escape(),
+                check('product').exists().withMessage('Field "product" is missing').isUUID().trim().escape(),
             ],
             this.postOne);
         this.router.put(
             '/:id',
             [
-                check('id').trim().escape(),
+                check('seller').trim().escape(),
+                check('buyer').trim().escape(),
+                check('product').trim().escape(),
             ],
             this.putOne);
         this.router.delete('/:id', this.deleteOne);
@@ -43,7 +47,9 @@ export class SellController {
         Logger.debug('GET sells');
 
         // Return every sells in DB
-        return await this.sellService.findAll();
+        const sells = await this.sellService.findAll();
+        res.send(sells).end();
+        return;
     }
 
     /**

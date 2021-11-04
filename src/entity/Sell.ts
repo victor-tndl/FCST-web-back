@@ -3,13 +3,16 @@ import { Product } from "./Product";
 import { User } from "./User";
 
 @Entity()
-@Unique(["user", "product"])
+@Unique(["seller", "buyer", "product"])
 export class Sell {
     @PrimaryGeneratedColumn("uuid")
     id!: String;
 
     @ManyToOne(() => User, user => user.id)
-    user!: User;
+    seller!: User;
+
+    @ManyToOne(() => User, user => user.id)
+    buyer!: User;
 
     @ManyToOne(() => Product, product => product.id)
     product!: Product;
