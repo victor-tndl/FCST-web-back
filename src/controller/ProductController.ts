@@ -163,7 +163,7 @@ export class ProductController {
             res.status(404).send("Error, parameter id is missing or wrong");
             return;
         } else {
-            const response = await this.productService.delete(parseInt(productId!, 10));
+            const response = await this.productService.delete(productId);
             res.end();
             return;
         }

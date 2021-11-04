@@ -156,7 +156,7 @@ export class SellController {
             res.status(404).send("Error, parameter id is missing or wrong");
             return;
         } else {
-            const response = await this.sellService.delete(parseInt(sellId!, 10));
+            const response = await this.sellService.delete(sellId);
             res.end();
             return;
         }

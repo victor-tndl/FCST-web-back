@@ -158,7 +158,7 @@ export class UserController {
             res.status(404).send("Error, parameter id is missing or wrong");
             return;
         } else {
-            const response = await this.userService.delete(parseInt(userId!, 10));
+            const response = await this.userService.delete(userId);
             res.end();
             return;
         }
