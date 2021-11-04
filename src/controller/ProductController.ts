@@ -54,9 +54,9 @@ export class ProductController {
      */
      public getAll = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET products');
+        
         // Return every products in DB
-
-        return;
+        return await this.productService.findAll();
     }
 
     /**
@@ -68,7 +68,24 @@ export class ProductController {
      */
      public getOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET One product');
-        return;
+
+        const productId = req.params.id;
+        if (productId === undefined || productId === null) {
+            res.status(400).send("Error, parameter id is missing or wrong").end();
+            return;
+        }
+        else {
+            const product = await this.productService.findOne(productId);
+            if (product === undefined) {
+                // Send 404 error
+                res.status(404).send('Entity not found').end();
+                return;
+            }
+
+            // Send product found
+            res.send(product).end();
+            return;
+        }
     }
 
     /**
@@ -89,6 +106,14 @@ export class ProductController {
         if (!result.isEmpty()) {
             res.status(404).send({ errors: result.array() }).end();
             return;
+        }
+
+        const response = await this.productService.create(req.body)
+        
+        if (response) {
+            res.end();
+        } else {
+            res.status(404).send('Unable to create product').end();
         }
 
         return;

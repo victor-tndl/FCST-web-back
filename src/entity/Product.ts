@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 export enum productState {
-    'PENDING' = 'PENDING',
-    'ACCEPTED' = 'ACCEPTED',
+    'OPENED' = 'OPENED',
+    'SOLD' = 'SOLD',
     'CLOSED' = 'CLOSED'
 }
 
@@ -28,10 +28,10 @@ export class Product {
 
     @Column({
         type: "enum",
-        enum: ["PENDING" , "ACCEPTED" , "CLOSED"],
-        default: "PENDING"
+        enum: ["OPENED" , "SOLD" , "CLOSED"],
+        default: "OPENED"
     })
-    state: String = productState.PENDING;
+    state: String = productState.OPENED;
 
     @Column({
         type: "enum",

@@ -41,8 +41,9 @@ export class UserController {
      */
      public getAll = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET users');
+
         // Return every users in DB
-        return;
+        return await this.userService.findAll();
     }
 
     /**
@@ -54,7 +55,24 @@ export class UserController {
      */
      public getOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET One user');
-        return;
+
+        const userId = req.params.id;
+        if (userId === undefined || userId === null) {
+            res.status(400).send("Error, parameter id is missing or wrong").end();
+            return;
+        }
+        else {
+            const user = await this.userService.findOne(userId);
+            if (user === undefined) {
+                // Send 404 error
+                res.status(404).send('Entity not found').end();
+                return;
+            }
+
+            // Send user found
+            res.send(user).end();
+            return;
+        }
     }
 
     /**
@@ -75,6 +93,14 @@ export class UserController {
         if (!result.isEmpty()) {
             res.status(404).send({ errors: result.array() }).end();
             return;
+        }
+
+        const response = await this.userService.create(req.body)
+        
+        if (response) {
+            res.end();
+        } else {
+            res.status(404).send('Unable to create product').end();
         }
 
         return;

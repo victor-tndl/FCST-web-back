@@ -41,8 +41,9 @@ export class SellController {
      */
      public getAll = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET sells');
+
         // Return every sells in DB
-        return;
+        return await this.sellService.findAll();
     }
 
     /**
@@ -54,7 +55,24 @@ export class SellController {
      */
      public getOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET One sell');
-        return;
+
+        const sellId = req.params.id;
+        if (sellId === undefined || sellId === null) {
+            res.status(400).send("Error, parameter id is missing or wrong").end();
+            return;
+        }
+        else {
+            const sell = await this.sellService.findOne(sellId);
+            if (sell === undefined) {
+                // Send 404 error
+                res.status(404).send('Entity not found').end();
+                return;
+            }
+
+            // Send sell found
+            res.send(sell).end();
+            return;
+        }
     }
 
     /**
@@ -75,6 +93,14 @@ export class SellController {
         if (!result.isEmpty()) {
             res.status(404).send({ errors: result.array() }).end();
             return;
+        }
+
+        const response = await this.sellService.create(req.body)
+        
+        if (response) {
+            res.end();
+        } else {
+            res.status(404).send('Unable to create product').end();
         }
 
         return;
