@@ -8,19 +8,26 @@ export class User {
     @PrimaryGeneratedColumn("uuid")
     id!: String;
 
-    @Column()
+    @Column("varchar", {nullable: false})
     email!: string;
 
-    @Column("varchar", { length: 50, nullable: false, select: false})
-    private password?: string;
+    @Column("varchar", {nullable: false, select: false})
+    private password!: string;
 
-    @Column()
+    @Column("varchar", {length: 300})
+    token!: string;
+
+    @Column("varchar", {nullable: false})
     firstName!: String;
 
-    @Column()
+    @Column("varchar", {nullable: false})
     lastName!: String;
 
     @OneToMany(() => Product, products => products.id)
     @JoinTable()
     products!: Product[];
+
+    getPassword = (): string => {
+        return this.password;
+    }
 }
