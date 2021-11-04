@@ -7,9 +7,11 @@ var cookieParser = require('cookie-parser');
 var cors = require('cors');
 
 import { createConnection}  from "typeorm";
+import { AuthenticationController } from "../controller/AuthenticationController";
 import { ProductController } from "../controller/ProductController";
 import { SellController } from "../controller/SellController";
 import { UserController } from "../controller/UserController";
+import { AuthenticationService } from "./AuthenticationService";
 import Logger, { loggerMiddleware } from "./Logger";
 
 export class Server {
@@ -17,6 +19,7 @@ export class Server {
     private productController?: ProductController;
     private userController?: UserController;
     private sellController?: SellController;
+    private authenticationController?: AuthenticationController;
 
     constructor() {
         this.app = express(); // init the application
@@ -46,6 +49,14 @@ export class Server {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: false }));
         this.app.use(cookieParser());
+
+        this.app.all('*', async (req: Request, res: Response, next: NextFunction) => {
+            if (req.originalUrl !== '/api/login' && req.originalUrl !== '/api/login/') {
+                AuthenticationService.authenticationFilter(req, res, next);
+            } else {
+                return next();
+            }
+        });
     }
 
     private unknownRoutesConfiguration() {
@@ -96,11 +107,13 @@ export class Server {
             }
         });
 
+        this.authenticationController = new AuthenticationController();
         this.productController = new ProductController();
         this.userController = new UserController();
         this.sellController = new SellController();
 
         // Configure routes for each controller
+        this.app.use("/api/", this.authenticationController.router);
         this.app.use("/api/products", this.productController.router);
         this.app.use("/api/users", this.userController.router);
         this.app.use("/api/sells", this.sellController.router);

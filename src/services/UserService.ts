@@ -1,4 +1,5 @@
 import { getCustomRepository } from "typeorm";
+import { User } from "../entity/User";
 import { UserRepository } from "../repository/UserRepository";
 import Logger from "./Logger";
 
@@ -33,6 +34,24 @@ export class UserService {
     }
 
     /**
+     * 
+     * @returns user | undefined
+     */
+    public findByEmail = async (email: string) => {
+        const user = await this.userRepository.findByEmail(email);
+        return user;
+    }
+
+    /**
+     * 
+     * @returns user | undefined
+     */
+     public findByEmailWithPassword = async (email: string) => {
+        const user = await this.userRepository.findByEmailWithPassword(email);
+        return user;
+    }
+
+    /**
      * Create a new user entity
      * @param body Validated body of the request
      * @returns boolean
@@ -41,6 +60,27 @@ export class UserService {
         try {
             const user = await this.userRepository.save(body);
             if (user !== undefined || user !== null) {
+                // Success
+                return true;
+            }
+
+            // Error while creating the new user (the user already exists)
+            return false;
+        } catch (err) {
+            Logger.error(err);
+            return false;
+        }
+    }
+
+    /**
+     * Save a new user entity
+     * @param body Validated body of the request
+     * @returns boolean
+     */
+     public save = async (user: Object) => {
+        try {
+            const userSaved = await this.userRepository.save(user);
+            if (userSaved !== undefined || userSaved !== null) {
                 // Success
                 return true;
             }
@@ -84,7 +124,7 @@ export class UserService {
      * @param id user's id to delete
      * @returns boolean
      */
-     public delete = async (id: number) => {
+     public delete = async (id: string) => {
         try {
             const results = await this.userRepository.delete(id);
             return results.affected;

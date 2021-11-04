@@ -84,7 +84,7 @@ export class ProductService {
      * @param id product's id to delete
      * @returns boolean
      */
-     public delete = async (id: number) => {
+     public delete = async (id: string) => {
         try {
             const results = await this.productRepository.delete(id);
             return results.affected;

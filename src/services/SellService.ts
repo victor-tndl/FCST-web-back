@@ -84,7 +84,7 @@ export class SellService {
      * @param id sell's id to delete
      * @returns boolean
      */
-     public delete = async (id: number) => {
+     public delete = async (id: string) => {
         try {
             const results = await this.sellRepository.delete(id);
             return results.affected;

@@ -5,25 +5,26 @@ import {User} from "../entity/User";
 export class UserRepository extends Repository<User> {
     public findById = (id: String) => {
         return this.createQueryBuilder("user")
-            .where("user.id = :id", { id})
+            .where("user.id = :id", { id })
             .getOne();
     }
 
     public findByName = (name: String) => {
         return this.createQueryBuilder("user")
-            .where("user.id = :id", { name})
+            .where("user.id = :id", { name })
             .getOne();
     }
 
-    public findByuserType = (userType: String) => {
+    public findByEmail = (email: String) => {
         return this.createQueryBuilder("user")
-            .where("user.userType = :id", { userType})
-            .getMany();
+            .where("user.email = :email", { email })
+            .getOne();
     }
 
-    public findTimeTable = () => {
+    public findByEmailWithPassword = (email: String) => {
         return this.createQueryBuilder("user")
-            .innerJoinAndSelect("user.timeslots", "ts")
-            .getMany();
+            .addSelect('user.password')
+            .where("user.email = :email", { email })
+            .getOne();
     }
 }
