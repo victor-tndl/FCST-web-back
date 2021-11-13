@@ -2,6 +2,7 @@ import { getCustomRepository } from "typeorm";
 import { User } from "../entity/User";
 import { UserRepository } from "../repository/UserRepository";
 import Logger from "./Logger";
+const jwt = require("jsonwebtoken");
 
 /**
  * User service class
@@ -56,12 +57,27 @@ export class UserService {
      * @param body Validated body of the request
      * @returns boolean
      */
-     public create = async (body: Object) => {
+     public create = async (body: User) => {
         try {
             const user = await this.userRepository.save(body);
             if (user !== undefined || user !== null) {
+                const token = jwt.sign(
+                    { 
+                        user_id: user.id,
+                        email: user.email,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                    },
+                    process.env.TOKEN_KEY,
+                    {
+                        expiresIn: "2h",
+                    }
+                );
+        
+                user.token = token;
+                await this.userRepository.save(user);
                 // Success
-                return true;
+                return user;
             }
 
             // Error while creating the new user (the user already exists)

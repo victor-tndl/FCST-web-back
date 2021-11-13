@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { check, ValidationError, validationResult } from 'express-validator';
+import { User } from "../entity/User";
 import Logger from "../services/Logger";
 import { UserService } from "../services/UserService";
 
@@ -18,7 +19,7 @@ export class UserController {
         this.router.get('/', this.getAll);
         this.router.get('/:id', this.getOne);
         this.router.post(
-            '/',
+            '/register',
             [
                 check('email').exists().withMessage('Field "email" is missing').isEmail().trim().escape(),
                 check('password').exists().withMessage('Field "password" is missing').trim().escape(),
@@ -91,6 +92,7 @@ export class UserController {
      */
     public postOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('POST user');
+
         // Check if there are format errors
         const errorFormatter = ({ location, msg, param, value, nestedErrors }: ValidationError) => {            
             return `${location}[${param}]: ${msg}`;
@@ -104,9 +106,9 @@ export class UserController {
         }
 
         const response = await this.userService.create(req.body)
-        
+
         if (response) {
-            res.end();
+            res.send(response).end();
         } else {
             res.status(404).send('Unable to create product').end();
         }

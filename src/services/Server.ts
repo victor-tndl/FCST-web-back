@@ -20,6 +20,7 @@ export class Server {
     private userController?: UserController;
     private sellController?: SellController;
     private authenticationController?: AuthenticationController;
+    private unauthenticatedRoutes: Array<string> = ['/api/login', '/api/login/', '/api/users/register', '/api/users/register/'];
 
     constructor() {
         this.app = express(); // init the application
@@ -36,10 +37,7 @@ export class Server {
         this.app.set('port', process.env.PORT || 3000);
 
         // Use in order to accept CORS -> Enabled communicaion with the front end
-        this.app.use(cors({
-            origin: ['http://localhost:3001', 'http://localhost:3001/', 'http://localhost:8000'],
-            optionsSuccessStatus: 200 // For legacy browser support
-        }));
+        this.app.use(cors());
 
         // view engine setup
         this.app.set('views', path.resolve('./', './views'));
@@ -51,7 +49,7 @@ export class Server {
         this.app.use(cookieParser());
 
         this.app.all('*', async (req: Request, res: Response, next: NextFunction) => {
-            if (req.originalUrl !== '/api/login' && req.originalUrl !== '/api/login/') {
+            if (!this.unauthenticatedRoutes.includes(req.originalUrl)) {
                 AuthenticationService.authenticationFilter(req, res, next);
             } else {
                 return next();
