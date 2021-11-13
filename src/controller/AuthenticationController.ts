@@ -45,7 +45,6 @@ export class AuthenticationController {
         // Check if the user exists in our database
         const user = await this.userService.findByEmailWithPassword(email);
 
-        console.log(user);
         if (user && (await EncryptionService.comparePassword(password, user.getPassword()))) {
             // Create token
             const token = jwt.sign(
