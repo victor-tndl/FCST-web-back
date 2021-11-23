@@ -22,11 +22,11 @@ export class MessageController {
     public initSockets = (server: Server) => {
         const wss = new WebSocket.Server({server: server, path: '/api/chats'});
 
-        wss.on('connection', function connection(ws, req) {
+        wss.on('connection', (ws: any, req: any) => {
             console.log('A new client Connected!');
-            ws.send('Welcome New Client!:', req);
+            ws.send('Welcome New Client!');
 
-            ws.on('message', function incoming(message) {
+            ws.on('message', (message: any) => {
                 console.log('received: %s', message);
 
                 wss.clients.forEach( (client) => {
