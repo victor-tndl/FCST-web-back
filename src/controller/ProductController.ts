@@ -108,7 +108,7 @@ export class ProductController {
             return;
         }
 
-        const response = await this.productService.create(req.body)
+        const response = await this.productService.create(req.body);
         
         if (response) {
             res.end();
