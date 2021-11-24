@@ -8,6 +8,7 @@ var cors = require('cors');
 
 import { createConnection}  from "typeorm";
 import { AuthenticationController } from "../controller/AuthenticationController";
+import { MessageController } from "../controller/MesageController";
 import { ProductController } from "../controller/ProductController";
 import { SellController } from "../controller/SellController";
 import { UserController } from "../controller/UserController";
@@ -16,16 +17,17 @@ import Logger, { loggerMiddleware } from "./Logger";
 
 export class Server {
     private app: express.Application;
+    private server: any;
     private productController?: ProductController;
     private userController?: UserController;
     private sellController?: SellController;
+    private messageController?: MessageController;
     private authenticationController?: AuthenticationController;
     private unauthenticatedRoutes: Array<string> = ['/api/login', '/api/login/', '/api/users/register', '/api/users/register/'];
 
     constructor() {
         this.app = express(); // init the application
         this.configuration();
-        this.routes();
     }
 
     /**
@@ -33,7 +35,7 @@ export class Server {
      * If we didn't configure the port into the environment
      * variables it takes the default port 3000
      */
-    public configuration() {
+    public configuration = () => {
         this.app.set('port', process.env.PORT || 3000);
 
         // Use in order to accept CORS -> Enabled communicaion with the front end
@@ -57,7 +59,7 @@ export class Server {
         });
     }
 
-    private unknownRoutesConfiguration() {
+    private unknownRoutesConfiguration = () => {
         // catch 404 and forward to error handler
         this.app.use(function(req: Request, res: Response, next: NextFunction) {
             next(createError(404));
@@ -79,7 +81,7 @@ export class Server {
     /**
      * Method to configure the routes
      */
-    public async routes(){
+    public routes = async () => {
         await createConnection({
             type: "mysql",
             host: process.env.DB_HOSTNAME,
@@ -109,12 +111,14 @@ export class Server {
         this.productController = new ProductController();
         this.userController = new UserController();
         this.sellController = new SellController();
+        this.messageController = new MessageController();
 
         // Configure routes for each controller
         this.app.use("/api/", this.authenticationController.router);
         this.app.use("/api/products", this.productController.router);
         this.app.use("/api/users", this.userController.router);
         this.app.use("/api/sells", this.sellController.router);
+        this.app.use("/api/messages", this.messageController.router);
 
         this.unknownRoutesConfiguration();
     }
@@ -122,11 +126,17 @@ export class Server {
     /**
      * Used to start the server
      */
-    public async start(){
-        this.app.listen(this.app.get('port'), () => {
-            Logger.info(`Server is listening ${this.app.get('port')} port.`);
+    public start = async () => {
+        // End server Initialisation (sockets)
+        await this.routes();
+        this.server = require('http').createServer(this.app);
+        this.messageController?.initSockets(this.server);
+
+        // Start the server
+        this.server.listen(process.env.PORT || 3000, () => {
+            Logger.info(`Server is listening ${this.server.address().port} port.`);
         });
     }
 
-    public async stop(){}
+    public stop = async () => {}
 }

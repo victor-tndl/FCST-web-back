@@ -14,8 +14,8 @@ export class User {
     @Column("varchar", {nullable: false, select: false})
     private password!: string;
 
-    @Column("varchar", {length: 300, nullable: true})
-    token: string = "";
+    @Column("varchar", {length: 300, nullable: true, select: false})
+    token!: string;
 
     @Column("varchar", {nullable: false})
     firstName!: String;
