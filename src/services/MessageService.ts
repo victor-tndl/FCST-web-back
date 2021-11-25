@@ -1,4 +1,6 @@
 import { getCustomRepository } from "typeorm";
+import { Message } from "../entity/Message";
+import { User } from "../entity/User";
 import { MessageRepository } from "../repository/MessageRepository";
 import Logger from "./Logger";
 
@@ -24,11 +26,38 @@ export class MessageService {
     }
 
     /**
-     * 
+     * Find all messages
      * @returns message[] | undefined
      */
     public findAll = async () => {
         const messages = await this.messageRepository.find();
+        return messages;
+    }
+
+    /**
+     * Find all messages by user (sent aand received)
+     * @returns message[] | undefined
+     */
+    public findMessageByUser = async (user: User) => {
+        const messages = await this.messageRepository.findMessageByUser(user);
+        return messages;
+    }
+
+    /**
+     * Find all messages sent by user 
+     * @returns message[] | undefined
+     */
+     public findMessageSentByUser = async (user: User) => {
+        const messages = await this.messageRepository.findMessageSentByUser(user);
+        return messages;
+    }
+
+    /**
+     * Find all messages received by user
+     * @returns message[] | undefined
+     */
+     public findMessageReceivedByUser = async (user: User) => {
+        const messages = await this.messageRepository.findMessageReceivedByUser(user);
         return messages;
     }
 

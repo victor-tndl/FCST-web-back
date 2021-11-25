@@ -4,6 +4,7 @@ import { Server } from "ws";
 import { MessageService } from "../services/MessageService";
 import Logger from "../services/Logger";
 import { UserService } from "../services/UserService";
+import { Message } from "../entity/Message";
 const WebSocket = require('ws');
 
 export class MessageController {
@@ -26,12 +27,19 @@ export class MessageController {
             console.log('A new client Connected!');
             ws.send('Welcome New Client!');
 
-            ws.on('message', (message: any) => {
-                console.log('received: %s', message);
+            ws.on('message', async (message: Message) => {
+                const msg = JSON.parse(message.toString());
+                console.log('received:', msg);
+
+                const storeReponse = await this.messageService.create(JSON.parse(message.toString()));
 
                 wss.clients.forEach( (client) => {
                     if (client !== ws && client.readyState === WebSocket.OPEN) {
-                        client.send(message);
+                        if (storeReponse) {
+                            client.send('SUCCESS');
+                        } else {
+                            client.send('ERROR');
+                        }
                     }
                 });
                 
@@ -49,12 +57,18 @@ export class MessageController {
             '/',
             [
                 check('content').exists().withMessage('Field "content" is missing').trim().escape(),
+                check('sender').exists().withMessage('Field "sender" is missing').isUUID().trim().escape(),
+                check('receiver').exists().withMessage('Field "receiver" is missing').isUUID().trim().escape(),
+                check('date').exists().withMessage('Field "date" is missing').isDate().trim().escape(),
             ],
             this.postOne);
         this.router.put(
             '/:id',
             [
                 check('content').trim().escape(),
+                check('sender').isUUID().trim().escape(),
+                check('receiver').isUUID().trim().escape(),
+                check('date').isDate().trim().escape(),
             ],
             this.putOne);
         this.router.delete('/:id', this.deleteOne);
@@ -130,7 +144,7 @@ export class MessageController {
             }
 
             // TODO: change method
-            const messages = await this.messageService.findAll();
+            const messages = await this.messageService.findMessageByUser(user);
             // Send message found
             res.send(messages).end();
             return;
@@ -162,7 +176,7 @@ export class MessageController {
             }
 
             // TODO: change method
-            const messages = await this.messageService.findAll();
+            const messages = await this.messageService.findMessageReceivedByUser(user);
             // Send message found
             res.send(messages).end();
             return;
@@ -194,7 +208,7 @@ export class MessageController {
             }
 
             // TODO: change method
-            const messages = await this.messageService.findAll();
+            const messages = await this.messageService.findMessageSentByUser(user);
             // Send message found
             res.send(messages).end();
             return;
