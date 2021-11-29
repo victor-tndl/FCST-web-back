@@ -64,21 +64,21 @@ export class MessageService {
     /**
      * Create a new message entity
      * @param body Validated body of the request
-     * @returns boolean
+     * @returns Message | null
      */
     public create = async (body: Object) => {
         try {
             const message = await this.messageRepository.save(body);
             if (message !== undefined || message !== null) {
                 // Success
-                return true;
+                return message;
             }
 
             // Error while creating the new message (the message already exists)
-            return false;
+            return null;
         } catch (err) {
             Logger.error(err);
-            return false;
+            return null;
         }
     }
 

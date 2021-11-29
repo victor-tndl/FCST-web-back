@@ -25,25 +25,22 @@ export class MessageController {
 
         wss.on('connection', (ws: any, req: any) => {
             console.log('A new client Connected!');
-            
 
             ws.on('message', async (message: Message) => {
-
                 const msg = JSON.parse(message.toString());
-                console.log('received:', msg);
-                ws.send(message.toString());
-                const storeReponse = await this.messageService.create(JSON.parse(message.toString()));
 
-                wss.clients.forEach( (client) => {
+                ws.send(message.toString());
+                const messageStored = await this.messageService.create(JSON.parse(message.toString()));
+
+                wss.clients.forEach( (client: any) => {
                     if (client !== ws && client.readyState === WebSocket.OPEN) {
-                        if (storeReponse) {
-                            client.send(message.toString());
+                        if(messageStored !== null) {
+                            client.send(JSON.stringify(messageStored));
                         } else {
                             client.send('ERROR');
                         }
                     }
                 });
-                
             });
         });
     }
@@ -236,10 +233,10 @@ export class MessageController {
             return;
         }
 
-        const response = await this.messageService.create(req.body);
+        const messageStored = await this.messageService.create(req.body);
 
-        if (response) {
-            res.send(response).end();
+        if (messageStored) {
+            res.end();
         } else {
             res.status(404).send('Unable to create product').end();
         }
