@@ -36,7 +36,7 @@ export class Server {
      * variables it takes the default port 3000
      */
     public configuration = () => {
-        this.app.set('port',  3000);
+        this.app.set('port', process.env.PORT || 3000);
 
         // Use in order to accept CORS -> Enabled communicaion with the front end
         this.app.use(cors());
@@ -84,26 +84,26 @@ export class Server {
     public routes = async () => {
         await createConnection({
             type: "mysql",
-            host: "localhost",
+            host: process.env.DB_HOSTNAME,
             port: 3306,
-            username: "root",
-            password: "root123",
-            database: "webErasmus",
+            username: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
             synchronize: true,
             logging: false,
             entities: [
-               'js/src/entity/**/*.{js,ts}' || ''
+                process.env.DB_ENTITIES_DIR || ''
             ],
             migrations: [
-                'js/src/migration/**/*.{js,ts}' || ''
+                process.env.DB_MIGRATIONS_DIR || ''
             ],
             subscribers: [
-                'js/src/subscriber/**/*.{js,ts}' || ''
+                process.env.DB_SUSCRIBERS_DIR || ''
             ],
             cli: {
-                entitiesDir: 'js/src/entity'|| '',
-                migrationsDir: 'js/src/migration'|| '',
-                subscribersDir: 'js/src/subscriber' || ''
+                entitiesDir: process.env.DB_CLI_ENTITIES_DIR || '',
+                migrationsDir: process.env.DB_CLI_MIGRATIONS_DIR || '',
+                subscribersDir: process.env.DB_CLI_SUSCRIBERS_DIR || ''
             }
         });
 

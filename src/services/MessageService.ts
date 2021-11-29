@@ -30,7 +30,7 @@ export class MessageService {
      * @returns message[] | undefined
      */
     public findAll = async () => {
-        const messages = await this.messageRepository.find();
+        const messages = await this.messageRepository.findAll();
         return messages;
     }
 
