@@ -12,7 +12,7 @@ export class MessageRepository extends Repository<Message> {
 
     public findAll = () => {
         return this.createQueryBuilder("message")
-            .orderBy("message.date", "ASC")
+            .orderBy("message.date", "DESC")
             .getOne();
     }
 
@@ -21,7 +21,7 @@ export class MessageRepository extends Repository<Message> {
             .where("message.sender = :id OR message.receiver = :id", { id: user.id })
             .innerJoinAndSelect("message.sender", "sd")
             .innerJoinAndSelect("message.receiver", "rv")
-            .orderBy("message.date", "ASC")
+            .orderBy("message.date", "DESC")
             .getMany();
     }
 
@@ -30,7 +30,7 @@ export class MessageRepository extends Repository<Message> {
             .where("message.sender = :id", { id: user.id })
             .innerJoinAndSelect("message.sender", "sd")
             .innerJoinAndSelect("message.receiver", "rv")
-            .orderBy("message.date", "ASC")
+            .orderBy("message.date", "DESC")
             .getMany();
     }
 
@@ -39,7 +39,7 @@ export class MessageRepository extends Repository<Message> {
             .where("message.receiver = :id", { id: user.id })
             .innerJoinAndSelect("message.sender", "sd")
             .innerJoinAndSelect("message.receiver", "rv")
-            .orderBy("message.date", "ASC")
+            .orderBy("message.date", "DESC")
             .getMany();
     }
 }
