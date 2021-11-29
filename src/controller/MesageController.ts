@@ -37,7 +37,7 @@ export class MessageController {
                 wss.clients.forEach( (client) => {
                     if (client !== ws && client.readyState === WebSocket.OPEN) {
                         if (storeReponse) {
-                            client.send('SUCCESS');
+                            client.send(message.toString());
                         } else {
                             client.send('ERROR');
                         }
