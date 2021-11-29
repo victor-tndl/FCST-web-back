@@ -54,7 +54,7 @@ export class AuthenticationController {
                     firstName: user.firstName,
                     lastName: user.lastName,
                 },
-                process.env.TOKEN_KEY,
+                'tokenkey',
                 {
                     expiresIn: "2h",
                 }

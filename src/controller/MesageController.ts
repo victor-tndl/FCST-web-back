@@ -25,12 +25,13 @@ export class MessageController {
 
         wss.on('connection', (ws: any, req: any) => {
             console.log('A new client Connected!');
-            ws.send('Welcome New Client!');
+            
 
             ws.on('message', async (message: Message) => {
+
                 const msg = JSON.parse(message.toString());
                 console.log('received:', msg);
-
+                ws.send(message.toString());
                 const storeReponse = await this.messageService.create(JSON.parse(message.toString()));
 
                 wss.clients.forEach( (client) => {
