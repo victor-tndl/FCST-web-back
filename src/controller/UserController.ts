@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { check, ValidationError, validationResult } from 'express-validator';
 import { User } from "../entity/User";
+import { EncryptionService } from "../services/EncryptionService";
 import Logger from "../services/Logger";
 import { UserService } from "../services/UserService";
 
@@ -105,6 +106,7 @@ export class UserController {
             return;
         }
 
+        req.body.password = await EncryptionService.cryptPassword(req.body.password);
         const response = await this.userService.create(req.body)
 
         if (response) {
