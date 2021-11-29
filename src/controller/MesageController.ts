@@ -7,11 +7,15 @@ import { UserService } from "../services/UserService";
 import { Message } from "../entity/Message";
 const WebSocket = require('ws');
 
+const __REGEX_FOR_WEBSOCKET__ = /[?&]id=([^&#]*)/g;
+
+
 export class MessageController {
 
     private messageService: MessageService;
     private userService: UserService;
     public router: Router;
+    private socketMap = new Map<string, any>();
 
     constructor() {
         this.messageService = new MessageService();
@@ -29,19 +33,21 @@ export class MessageController {
             ws.on('message', async (message: Message) => {
                 const msg = JSON.parse(message.toString());
 
-                ws.send(message.toString());
-                const messageStored = await this.messageService.create(JSON.parse(message.toString()));
+                const messageStored = <Message> await this.messageService.create(JSON.parse(message.toString()));
 
-                wss.clients.forEach( (client: any) => {
-                    if (client !== ws && client.readyState === WebSocket.OPEN) {
-                        if(messageStored !== null) {
-                            client.send(JSON.stringify(messageStored));
-                        } else {
-                            client.send('ERROR');
+                if (messageStored !== null) {
+                    this.socketMap.forEach((socket, id) => {
+                        if (messageStored.receiver.id === id || messageStored.sender.id === id) {
+                            if (socket.readyState === WebSocket.OPEN) {
+                                socket.send(JSON.stringify(messageStored));
+                            }
                         }
-                    }
-                });
+                    });
+                }
             });
+
+            const id = req.url.split("id=")[1].split("&")[0];
+            this.socketMap.set(id, ws);
         });
     }
 
