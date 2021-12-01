@@ -34,20 +34,30 @@ export class MessageController {
                 const msg = JSON.parse(message.toString());
 
                 const messageStored = <Message> await this.messageService.create(JSON.parse(message.toString()));
-
-                if (messageStored !== null) {
-                    this.socketMap.forEach((socket, id) => {
-                        if (messageStored.receiver.id === id || messageStored.sender.id === id) {
-                            if (socket.readyState === WebSocket.OPEN) {
-                                socket.send(JSON.stringify(messageStored));
-                            }
+                const storeReponse = await this.messageService.create(JSON.parse(message.toString()));
+                wss.clients.forEach( (client) => {
+                    if (client !== ws && client.readyState === WebSocket.OPEN) {
+                        if (storeReponse) {
+                            client.send(message.toString());
+                        } else {
+                            client.send('ERROR');
                         }
-                    });
-                }
+                    }
+                });
+
+                // if (messageStored !== null) {
+                //     this.socketMap.forEach((socket, id) => {
+                //         if (messageStored.receiver.id === id || messageStored.sender.id === id) {
+                //             if (socket.readyState === WebSocket.OPEN) {
+                //                 socket.send(JSON.stringify(messageStored));
+                //             }
+                //         }
+                //     });
+                // }
             });
 
-            const id = req.url.split("id=")[1].split("&")[0];
-            this.socketMap.set(id, ws);
+         //   const id = req.url.split("id=")[1].split("&")[0];
+         //   this.socketMap.set(id, ws);
         });
     }
 
