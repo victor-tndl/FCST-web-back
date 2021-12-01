@@ -66,7 +66,7 @@ export class MessageService {
      * @param body Validated body of the request
      * @returns Message | null
      */
-    public create = async (body: Object) => {
+    public create = async (body: any) => {
         try {
             const message = await this.messageRepository.save(body);
             if (message !== undefined || message !== null) {

@@ -6,7 +6,7 @@ import { Product } from "./Product";
 @Unique(["firstName", "lastName"])
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    id!: String;
+    id!: string;
 
     @Column("varchar", {nullable: false})
     email!: string;
@@ -18,10 +18,10 @@ export class User {
     token!: string;
 
     @Column("varchar", {nullable: false})
-    firstName!: String;
+    firstName!: string;
 
     @Column("varchar", {nullable: false})
-    lastName!: String;
+    lastName!: string;
 
     @OneToMany(() => Product, products => products.id)
     @JoinTable()
