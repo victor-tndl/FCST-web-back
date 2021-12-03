@@ -51,7 +51,7 @@ export class ProductService {
         try {
             body.image = Buffer.from(body.image);
             const product = await this.productRepository.save(body);
-            console.log(product);
+
             if (product !== undefined || product !== null) {
                 // Success
                 return true;
