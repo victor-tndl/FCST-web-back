@@ -42,4 +42,7 @@ export class Product {
         default: "COMPUTER"
     })
     type: String = productType.COMPUTER;
+
+    @Column({ type: "blob", nullable: true })
+    image!: Buffer;
 }

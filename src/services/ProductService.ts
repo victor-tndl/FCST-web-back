@@ -24,6 +24,16 @@ export class ProductService {
     }
 
     /**
+     * Get last product
+     * @param id 
+     * @returns product | undefined
+     */
+     public findLast = async () => {
+        const product = await this.productRepository.findLast();
+        return product;
+    }
+
+    /**
      * 
      * @returns product[] | undefined
      */
@@ -37,9 +47,11 @@ export class ProductService {
      * @param body Validated body of the request
      * @returns boolean
      */
-     public create = async (body: Object) => {
+     public create = async (body: any) => {
         try {
+            body.image = Buffer.from(body.image);
             const product = await this.productRepository.save(body);
+            console.log(product);
             if (product !== undefined || product !== null) {
                 // Success
                 return true;

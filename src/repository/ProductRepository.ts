@@ -21,9 +21,10 @@ export class ProductRepository extends Repository<Product> {
             .getMany();
     }
 
-    public findTimeTable = () => {
+    public findLast = () => {
         return this.createQueryBuilder("product")
-            .innerJoinAndSelect("product.timeslots", "ts")
-            .getMany();
+            .where("product.status = 'OPENED'")
+            .orderBy('product.id', 'DESC')
+            .getOne();
     }
 }

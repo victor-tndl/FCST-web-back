@@ -17,6 +17,7 @@ export class ProductController {
 
     public routes() {
         this.router.get('/', this.getAll);
+        this.router.get('/last', this.getLast);
         this.router.get('/:id', this.getOne);
         this.router.post(
             '/',
@@ -24,6 +25,7 @@ export class ProductController {
                 check('title').exists().withMessage('Field "title" is missing').trim().escape(),
                 check('price').exists().withMessage('Field "price" is missing').isFloat().trim().escape(),
                 check('description').exists().withMessage('Field "description" is missing').trim().escape(),
+                check('image').exists().withMessage('Field "image" is missing'),
             ],
             this.postOne);
         this.router.put(
@@ -32,6 +34,7 @@ export class ProductController {
                 check('title').trim().escape(),
                 check('price').isFloat().trim().escape(),
                 check('description').trim().escape(),
+                check('image'),
                 check('state').custom((value: String) => {
                     return (Object.values(productState) as String[]).includes(value);
                 }).trim().escape(),
@@ -60,13 +63,26 @@ export class ProductController {
     }
 
     /**
+     * GET last product
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
+    public getLast = async (req: Request, res: Response, next: NextFunction) => {
+        const lastProduct = await this.productService.findLast();
+        res.status(200).json(lastProduct).end();
+        return;
+    }
+
+    /**
      * GET product by id
      * @param req Express Request
      * @param res Express Response
      * @param next Express NextFunction
      * @returns 
      */
-     public getOne = async (req: Request, res: Response, next: NextFunction) => {
+    public getOne = async (req: Request, res: Response, next: NextFunction) => {
         Logger.debug('GET One product');
 
         const productId = req.params.id;

@@ -54,8 +54,12 @@ export class MessageController {
                 }
             });
 
-           const id = req.url.split("id=")[1].split("&")[0];
-           this.socketMap.set(id, ws);
+            try {
+                const id = req.url.split("id=")[1].split("&")[0];
+                this.socketMap.set(id, ws);
+            } catch (err) {
+                Logger.error(err);
+            }
         });
     }
 
