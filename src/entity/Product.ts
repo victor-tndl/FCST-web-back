@@ -23,7 +23,7 @@ export class Product {
     @Column("varchar")
     title: String = '';
 
-    @Column("text")
+    @Column("text")  
     description: String = '';
 
     @Column("float")
@@ -43,6 +43,9 @@ export class Product {
     })
     type: String = productType.COMPUTER;
 
-    @Column({ type: "blob", nullable: true })
-    image!: Buffer;
+    @Column("longtext") 
+    image: String='' ;
+
+    @Column("varchar")
+    seller: String = '';
 }
