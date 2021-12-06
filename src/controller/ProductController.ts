@@ -17,6 +17,7 @@ export class ProductController {
 
     public routes() {
         this.router.get('/', this.getAll);
+        this.router.get('/types', this.getTypes);
         this.router.get('/last', this.getLast);
         this.router.get('/:id', this.getOne);
         this.router.post(
@@ -59,6 +60,18 @@ export class ProductController {
         // Return every products in DB
         const products = await this.productService.findAll();
         res.send(products).end();
+        return;
+    }
+
+    /**
+     * GET product types
+     * @param req Express Request
+     * @param res Express Response
+     * @param next Express NextFunction
+     * @returns 
+     */
+     public getTypes = async (req: Request, res: Response, next: NextFunction) => {
+        res.status(200).json(Object.values(productType) as String[]).end();
         return;
     }
 

@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { User } from "./User";
 
 export enum productState {
     'OPENED' = 'OPENED',
@@ -43,9 +44,10 @@ export class Product {
     })
     type: String = productType.COMPUTER;
 
-    @Column("longtext") 
-    image: String='' ;
+    @Column("longtext")
+    image: String='';
 
-    @Column("varchar")
-    seller: String = '';
+    @ManyToOne(() => User, user => user.id)
+    @JoinColumn()
+    sender!: User;
 }
