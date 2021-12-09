@@ -28,6 +28,7 @@ export class Server {
     constructor() {
         this.app = express(); // init the application
         this.configuration();
+      
     }
 
     /**
@@ -37,17 +38,19 @@ export class Server {
      */
     public configuration = () => {
         this.app.set('port', process.env.PORT || 3000);
+        //limit file transfer to 200mb
+        const myParser = require("body-parser");
+        this.app.use(myParser.json({limit: '200mb'}));
+        this.app.use(myParser.urlencoded({limit: '200mb', extended: true}));
 
         // Use in order to accept CORS -> Enabled communicaion with the front end
         this.app.use(cors());
-
         // view engine setup
         this.app.set('views', path.resolve('./', './views'));
         this.app.set('view engine', 'pug');
-
         this.app.use(loggerMiddleware);
         this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: false }));
+        this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
 
         this.app.all('*', async (req: Request, res: Response, next: NextFunction) => {

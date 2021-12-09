@@ -47,7 +47,7 @@ export class Product {
     @Column("longtext")
     image: String='';
 
-    @ManyToOne(() => User, user => user.id)
-    @JoinColumn()
-    sender!: User;
+    @Column("text")
+    seller: String='';
+
 }

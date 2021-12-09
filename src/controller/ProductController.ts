@@ -14,6 +14,7 @@ export class ProductController {
         this.router = Router();
         this.routes();
     }
+    
 
     public routes() {
         this.router.get('/', this.getAll);
@@ -27,6 +28,8 @@ export class ProductController {
                 check('price').exists().withMessage('Field "price" is missing').isFloat().trim().escape(),
                 check('description').exists().withMessage('Field "description" is missing').trim().escape(),
                 check('image').exists().withMessage('Field "image" is missing'),
+                check('seller').exists().withMessage('Field "title" is missing').trim().escape(),
+
             ],
             this.postOne);
         this.router.put(
